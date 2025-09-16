@@ -5,7 +5,7 @@ contract Bank {
     address public immutable owner;
     mapping (address => uint) public balances;
     address[3] topDepositors;
-    uint8 private constant TOP_COUNT = 3;
+    uint8 private constant TOP_COUNT = 3; 
 
     constructor() {
         owner = msg.sender;
