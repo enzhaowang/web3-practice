@@ -6,7 +6,11 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/ReentrancyGuard.sol";
 
-contract TokenBank is Ownable, ReentrancyGuard{
+interface ItokenReceiver{
+    function tokenReceived(address from, uint256 amount) external returns (bool);
+
+}
+contract TokenBank is Ownable, ReentrancyGuard, ItokenReceiver{
 
     using SafeERC20 for IERC20;
 
@@ -67,6 +71,16 @@ contract TokenBank is Ownable, ReentrancyGuard{
         
         token.safeTransfer(msg.sender, amount);
         emit Withdraw(msg.sender, amount);
+    }
+
+    function tokenReceived(address from, uint256 amount) external returns (bool) {
+        require(msg.sender == address(token), "caller is not the token contract");
+
+        balances[from] += amount;
+        totalBalance += amount;
+
+        emit Deposit(from, amount);
+        return true;
     }
 
 
